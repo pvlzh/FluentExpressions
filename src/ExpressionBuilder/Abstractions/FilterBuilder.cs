@@ -25,8 +25,8 @@ public abstract class FilterBuilder<TSource>
     public abstract FilterBuilder<TSource> Or(Expression<Func<TSource, bool>> additionalPredicate);
     
     public abstract FilterBuilder<TSource> And<TItem>(
-        Expression<Func<TSource, IEnumerable<TItem>>> collectionProperty,
-        Action<CollectionPredicate<TItem>> collectionPredicate);
+        Expression<Func<TSource, IEnumerable<TItem>>> collectionProperty, 
+        Action<CollectionPredicate<TItem>> collectionMethod);
     
     public abstract FilterBuilder<TSource> Or<TItem>(
         Expression<Func<TSource, IEnumerable<TItem>>> collectionProperty, 
