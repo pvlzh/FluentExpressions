@@ -10,5 +10,5 @@ public class SourceObject
     
     public DateTime CreationDate { get; set; }
 
-    public IEnumerable<SourceItem> SourceItems { get; set; } = null!;
+    public ICollection<SourceItem>? SourceItems { get; set; }
 }

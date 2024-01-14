@@ -28,7 +28,8 @@ public class BaseTests
         var sources = _fixture.CreateMany<SourceObject>(30).ToArray();
         var count = sources.Count(s => s.CreationDate.Year == currentYear 
                                        && s.Size > sizeLimit 
-                                       && s.SourceItems.All(i => i.Price > 100));
+                                       && s.Name.StartsWith(nameof(SourceObject.Name))
+                                       && s.SourceItems!.All(i => i.Price > 100));
         
         // Act
         var createdInCurrentYear = ExpressionFor<SourceObject>
@@ -37,13 +38,19 @@ public class BaseTests
         var sizeIsGreaterThanSizeLimit = ExpressionFor<SourceObject>
             .Where(s => s.Size > sizeLimit);
         
+        var nameIsStartWithName = ExpressionFor<SourceObject>
+            .Where(s => s.Name, value => value.StartWith(nameof(SourceObject.Name)));
+
         var priceIsGreaterThanOneHundred = ExpressionFor<SourceItem>
             .Where(item => item.Price > 100);
         
         var allItemsPriceIsGreaterThanOneHundred = ExpressionFor<SourceObject>
-            .Where(s => s.SourceItems, items => items.All(priceIsGreaterThanOneHundred));
+            .Where(s => s.SourceItems!, items => items.All(priceIsGreaterThanOneHundred));
         
-        var filter = createdInCurrentYear.And(sizeIsGreaterThanSizeLimit).And(allItemsPriceIsGreaterThanOneHundred);
+        var filter = createdInCurrentYear
+            .And(nameIsStartWithName)
+            .And(sizeIsGreaterThanSizeLimit)
+            .And(allItemsPriceIsGreaterThanOneHundred);
         
         var result = sources.AsQueryable().Count(filter);
         

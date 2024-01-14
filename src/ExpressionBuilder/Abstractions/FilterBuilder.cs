@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using ExpressionBuilder.Abstractions.Collections;
+using ExpressionBuilder.Abstractions.Methods;
 
 namespace ExpressionBuilder.Abstractions;
 
@@ -19,18 +19,36 @@ public abstract class FilterBuilder<TSource>
     {
         PredicateExpression = startFiltration;
     }
+
+    #region Base
+    public abstract FilterBuilder<TSource> And(
+        Expression<Func<TSource, bool>> additionalPredicate);
     
-    public abstract FilterBuilder<TSource> And(Expression<Func<TSource, bool>> additionalPredicate);
+    public abstract FilterBuilder<TSource> Or(
+        Expression<Func<TSource, bool>> additionalPredicate);
+    #endregion
     
-    public abstract FilterBuilder<TSource> Or(Expression<Func<TSource, bool>> additionalPredicate);
-    
+
+    #region Collection
     public abstract FilterBuilder<TSource> And<TItem>(
         Expression<Func<TSource, IEnumerable<TItem>>> collectionProperty, 
-        Action<CollectionPredicate<TItem>> collectionMethod);
+        Func<CollectionMethods<TSource, TItem>, Expression<Func<TSource, bool>>> collectionDelegate);
     
     public abstract FilterBuilder<TSource> Or<TItem>(
         Expression<Func<TSource, IEnumerable<TItem>>> collectionProperty, 
-        Action<CollectionPredicate<TItem>> collectionMethod);
+        Func<CollectionMethods<TSource, TItem>, Expression<Func<TSource, bool>>> collectionDelegate);
+    #endregion
+    
+
+    #region String
+    public abstract FilterBuilder<TSource> And(
+        Expression<Func<TSource, string>> stringProperty, 
+        Func<StringMethods<TSource>, Expression<Func<TSource, bool>>> stringDelegate);
+    
+    public abstract FilterBuilder<TSource> Or(
+        Expression<Func<TSource, string>> stringProperty, 
+        Func<StringMethods<TSource>, Expression<Func<TSource, bool>>> stringDelegate);
+    #endregion
     
 
     public static implicit operator Expression<Func<TSource, bool>>(
