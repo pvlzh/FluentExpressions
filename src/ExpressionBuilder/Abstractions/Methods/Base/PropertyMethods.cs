@@ -1,13 +1,24 @@
-using ExpressionBuilder.Abstractions.Expressions;
+using System;
+using System.Linq.Expressions;
+using ExpressionBuilder.Extensions;
 
 namespace ExpressionBuilder.Abstractions.Methods.Base;
 
+/// <summary>
+/// Абстрактный класс операций над полем или свойством объекта с типом <see cref="TSource"/>
+/// </summary>
+/// <typeparam name="TSource"> Тип исходного объекта.</typeparam>
+/// <typeparam name="TProperty"> Тип поля или свойства исходного объекта.</typeparam>
 public abstract class PropertyMethods<TSource, TProperty>
 {
-    protected readonly MemberExpression<TSource, TProperty> MemberPath;
+    protected readonly MemberExpression MemberExpression;
+    protected readonly ParameterExpression SourceParameter;
 
-    protected PropertyMethods(MemberExpression<TSource, TProperty> memberPath)
+    /// <inheritdoc cref="PropertyMethods{TSource, TProperty}"/>
+    /// <param name="memberExpression"> Выражение доступа к полю или свойству элемента.</param>
+    protected PropertyMethods(Expression<Func<TSource, TProperty>> memberExpression)
     {
-        MemberPath = memberPath;
+        MemberExpression = memberExpression.GetMemberExpression();
+        SourceParameter = memberExpression.Parameters[0];
     }
 }

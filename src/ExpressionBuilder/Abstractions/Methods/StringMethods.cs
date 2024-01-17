@@ -1,35 +1,36 @@
 using System;
 using System.Linq.Expressions;
-using ExpressionBuilder.Abstractions.Expressions;
 using ExpressionBuilder.Abstractions.Methods.Base;
 
 namespace ExpressionBuilder.Abstractions.Methods;
 
 /// <summary>
-/// Методы предикатов для строки.
+/// Операций над полем или свойством типа <see cref="string"/> объекта <see cref="TSource"/>.
 /// </summary>
-public abstract class StringMethods<TSource> : PropertyMethods<TSource, string>
+/// <typeparam name="TSource"> Тип исходного элемента.</typeparam>
+public abstract class StringMethods<TSource>
+    : PropertyMethods<TSource, string>
 {
-    protected StringMethods(MemberExpression<TSource, string> memberPath) 
-        : base(memberPath)
+    protected StringMethods(Expression<Func<TSource, string>> memberExpression) 
+        : base(memberExpression)
     {
     }
 
     /// <summary>
-    /// Начинается со значения.
+    /// Значение поля или свойства с типом <see cref="string"/> начинается со значения <see cref="value"/>.
     /// </summary>
-    /// <param name="value"> Значение.</param>
+    /// <param name="value"> Проверяемое значение.</param>
     public abstract Expression<Func<TSource, bool>> StartWith(string value);
 
     /// <summary>
-    /// Заканчивается значением.
+    /// Значение поля или свойства с типом <see cref="string"/> заканчивается значением <see cref="value"/>.
     /// </summary>
-    /// <param name="value"> Значение.</param>
+    /// <param name="value"> Проверяемое значение.</param>
     public abstract Expression<Func<TSource, bool>> EndWith(string value);
 
     /// <summary>
-    /// Содержит значение.
+    /// Значение поля или свойства с типом <see cref="string"/> содержит <see cref="value"/>.
     /// </summary>
-    /// <param name="value"> Значение.</param>
+    /// <param name="value"> Проверяемое значение.</param>
     public abstract Expression<Func<TSource, bool>> Contains(string value);
 }

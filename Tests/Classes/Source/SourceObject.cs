@@ -10,5 +10,6 @@ public class SourceObject
     
     public DateTime CreationDate { get; set; }
 
-    public ICollection<SourceItem>? SourceItems { get; set; }
+    public SourceItem SourceItem { get; set; }
+    public ICollection<SourceItem> SourceItems { get; set; }
 }

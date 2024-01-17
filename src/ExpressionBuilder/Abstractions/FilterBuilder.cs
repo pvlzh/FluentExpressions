@@ -21,19 +21,26 @@ public abstract class FilterBuilder<TSource>
     }
 
     #region Base
+
     public abstract FilterBuilder<TSource> And(
         Expression<Func<TSource, bool>> additionalPredicate);
     
+    /// <summary>
+    /// Дополнить логическим выражением над <see cref="TSource"/> связв с исходным через логический оператор "ИЛИ".
+    /// </summary>
+    /// <param name="additionalPredicate"> Логическое выражение над <see cref="TSource"/></param>
+    /// <returns> Строитель выражения фильтрации.</returns>
     public abstract FilterBuilder<TSource> Or(
         Expression<Func<TSource, bool>> additionalPredicate);
     #endregion
     
 
     #region Collection
+
     public abstract FilterBuilder<TSource> And<TItem>(
         Expression<Func<TSource, IEnumerable<TItem>>> collectionProperty, 
         Func<CollectionMethods<TSource, TItem>, Expression<Func<TSource, bool>>> collectionDelegate);
-    
+
     public abstract FilterBuilder<TSource> Or<TItem>(
         Expression<Func<TSource, IEnumerable<TItem>>> collectionProperty, 
         Func<CollectionMethods<TSource, TItem>, Expression<Func<TSource, bool>>> collectionDelegate);

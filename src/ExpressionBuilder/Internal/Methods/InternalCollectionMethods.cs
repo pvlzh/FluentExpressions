@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using ExpressionBuilder.Abstractions.Expressions;
 using ExpressionBuilder.Abstractions.Methods;
 
 namespace ExpressionBuilder.Internal.Methods;
@@ -12,8 +11,8 @@ namespace ExpressionBuilder.Internal.Methods;
 internal class InternalCollectionMethods<TSource ,TItem> 
     : CollectionMethods<TSource, TItem>
 {
-    public InternalCollectionMethods(MemberExpression<TSource, IEnumerable<TItem>> memberPath)
-        : base(memberPath)
+    public InternalCollectionMethods(Expression<Func<TSource, IEnumerable<TItem>>> memberExpression)
+        : base(memberExpression)
     {
     }
 
@@ -21,16 +20,16 @@ internal class InternalCollectionMethods<TSource ,TItem>
     public override Expression<Func<TSource, bool>> Any(Expression<Func<TItem, bool>> itemPredicate)
     {
         var anyMethod = AnyMethod(typeof(TItem));
-        var callExpression = Expression.Call(anyMethod, MemberPath, itemPredicate);
-        return Expression.Lambda<Func<TSource, bool>>(callExpression, MemberPath.Parameters);
+        var callExpression = Expression.Call(anyMethod, MemberExpression, itemPredicate);
+        return Expression.Lambda<Func<TSource, bool>>(callExpression, SourceParameter);
     }
 
     /// <inheritdoc />
     public override Expression<Func<TSource, bool>> All(Expression<Func<TItem, bool>> itemPredicate)
     {
         var allMethod = AllMethod(typeof(TItem));
-        var callExpression = Expression.Call(allMethod, MemberPath, itemPredicate);
-        return Expression.Lambda<Func<TSource, bool>>(callExpression, MemberPath.Parameters);
+        var callExpression = Expression.Call(allMethod, MemberExpression, itemPredicate);
+        return Expression.Lambda<Func<TSource, bool>>(callExpression, SourceParameter);
     }
 
 

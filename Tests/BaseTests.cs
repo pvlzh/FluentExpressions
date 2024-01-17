@@ -1,5 +1,6 @@
 using AutoFixture;
 using ExpressionBuilder;
+using Tests.Classes.Destination;
 using Tests.Classes.Source;
 
 namespace Tests;
@@ -64,6 +65,24 @@ public class BaseTests
     [Fact]
     public void ProjectionTest()
     {
+        // Arrange
+        var sources = _fixture.CreateMany<SourceObject>(30).ToArray();
+        var query = sources.AsQueryable();
+        // Act
+
+        var itemProjection = ExpressionFor<SourceItem>.Select(i => new DestinationItem
+            { Id = i.Id, Description = i.Description, Price = i.Price });
         
+        var projectionExpression = ExpressionFor<SourceObject>.Select(s => 
+                new DestinationObject {
+                    Id = s.Id, 
+                    Name = s.Name, 
+                    CreationDate = s.CreationDate })
+            .With(to: d => d.DestinationItem, from: s => s.SourceItem, itemProjection);
+
+        var result = query.Select<SourceObject, DestinationObject>(projectionExpression).ToArray();
+
+        // Assert
+        Assert.Equal(sources.Length, result.Length);
     }
 }

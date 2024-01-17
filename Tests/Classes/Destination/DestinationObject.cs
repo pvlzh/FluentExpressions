@@ -10,5 +10,6 @@ public class DestinationObject
     
     public DateTime CreationDate { get; set; }
 
+    public DestinationItem DestinationItem { get; set; }
     public IEnumerable<DestinationItem> DestinationItems { get; set; } = null!;
 }

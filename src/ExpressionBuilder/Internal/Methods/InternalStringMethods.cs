@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using ExpressionBuilder.Abstractions.Expressions;
 using ExpressionBuilder.Abstractions.Methods;
 
 namespace ExpressionBuilder.Internal.Methods;
@@ -10,8 +9,8 @@ namespace ExpressionBuilder.Internal.Methods;
 /// <inheritdoc />
 internal class InternalStringMethods<TSource> : StringMethods<TSource> 
 {
-    public InternalStringMethods(MemberExpression<TSource, string> memberPath) 
-        : base(memberPath)
+    public InternalStringMethods(Expression<Func<TSource, string>> memberExpression) 
+        : base(memberExpression)
     {
     }
 
@@ -19,31 +18,31 @@ internal class InternalStringMethods<TSource> : StringMethods<TSource>
     public override Expression<Func<TSource, bool>> StartWith(string value)
     {
         var parameter = Expression.Constant(value);
-        var startWithMethod = StartWithMethod(typeof(string));
-        var callExpression = Expression.Call(MemberPath, startWithMethod, parameter);
-        return Expression.Lambda<Func<TSource, bool>>(callExpression, MemberPath.Parameters);
+        var startWithMethod = StartWithMethod();
+        var callExpression = Expression.Call(MemberExpression, startWithMethod, parameter);
+        return Expression.Lambda<Func<TSource, bool>>(callExpression, SourceParameter);
     }
 
     /// <inheritdoc />
     public override Expression<Func<TSource, bool>> EndWith(string value)
     {
         var parameter = Expression.Constant(value);
-        var endWithMethod = EndWithMethod(typeof(string));
-        var callExpression = Expression.Call(MemberPath, endWithMethod, parameter);
-        return Expression.Lambda<Func<TSource, bool>>(callExpression, MemberPath.Parameters);
+        var endWithMethod = EndWithMethod();
+        var callExpression = Expression.Call(MemberExpression, endWithMethod, parameter);
+        return Expression.Lambda<Func<TSource, bool>>(callExpression, SourceParameter);
     }
 
     /// <inheritdoc />
     public override Expression<Func<TSource, bool>> Contains(string value)
     {
         var parameter = Expression.Constant(value);
-        var containsMethod = ContainsMethod(typeof(string));
-        var callExpression = Expression.Call(MemberPath, containsMethod, parameter);
-        return Expression.Lambda<Func<TSource, bool>>(callExpression, MemberPath.Parameters);
+        var containsMethod = ContainsMethod();
+        var callExpression = Expression.Call(MemberExpression, containsMethod, parameter);
+        return Expression.Lambda<Func<TSource, bool>>(callExpression, SourceParameter);
     }
     
     
-    private static MethodInfo ContainsMethod(Type genericType)
+    private static MethodInfo ContainsMethod()
     {
         var containsInfo = typeof(string).GetMethods(BindingFlags.Instance | BindingFlags.Public)
             .First(m => m.Name == nameof(string.Contains) && m.GetParameters().Length == 1);
@@ -51,7 +50,7 @@ internal class InternalStringMethods<TSource> : StringMethods<TSource>
         return containsInfo;
     }
     
-    private static MethodInfo StartWithMethod(Type genericType)
+    private static MethodInfo StartWithMethod()
     {
         var startWithInfo = typeof(string).GetMethods(BindingFlags.Instance | BindingFlags.Public)
             .First(m => m.Name == nameof(string.StartsWith) && m.GetParameters().Length == 1);
@@ -59,7 +58,7 @@ internal class InternalStringMethods<TSource> : StringMethods<TSource>
         return startWithInfo;
     }
     
-    private static MethodInfo EndWithMethod(Type genericType)
+    private static MethodInfo EndWithMethod()
     {
         var endWithInfo = typeof(string).GetMethods(BindingFlags.Instance | BindingFlags.Public)
             .First(m => m.Name == nameof(string.EndsWith) && m.GetParameters().Length == 1);
