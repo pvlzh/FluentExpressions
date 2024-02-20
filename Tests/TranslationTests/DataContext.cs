@@ -3,14 +3,23 @@ using Tests.Classes.Source;
 
 namespace Tests.TranslationTests;
 
+/// <summary>
+/// Контекст БД.
+/// </summary>
 public class DataContext : DbContext
 {
-    public DbSet<SourceObject> SourceObjects { get; set; }
-    public DbSet<SourceItem> SourceItems { get; set; }
+    public DbSet<SourceObject> SourceObjects { get; set; } = null!;
+    public DbSet<SourceItem> SourceItems { get; set; } = null!;
 
-    public DataContext() : base() { }
-    public DataContext(DbContextOptions<DataContext> options) : base(options) {}
+    /// <inheritdoc />
+    public DataContext() 
+        : base() {}
 
+    /// <inheritdoc />
+    public DataContext(DbContextOptions<DataContext> options) 
+        : base(options) {}
+
+    /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<SourceItem>(builder =>

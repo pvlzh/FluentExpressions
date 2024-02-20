@@ -2,7 +2,7 @@ using System;
 using System.Linq.Expressions;
 using ExpressionBuilder.Extensions;
 
-namespace ExpressionBuilder.Abstractions.Methods.Base;
+namespace ExpressionBuilder.Methods.Base;
 
 /// <summary>
 /// Абстрактный класс операций над полем или свойством объекта с типом <see cref="TSource"/>

@@ -39,9 +39,6 @@ public class BaseTests
         var sizeIsGreaterThanSizeLimit = ExpressionFor<SourceObject>
             .Where(s => s.Size > sizeLimit);
         
-        var nameIsStartWithName = ExpressionFor<SourceObject>
-            .Where(s => s.Name, value => value.StartWith(nameof(SourceObject.Name)));
-
         var priceIsGreaterThanOneHundred = ExpressionFor<SourceItem>
             .Where(item => item.Price > 100);
         
@@ -49,7 +46,6 @@ public class BaseTests
             .Where(s => s.SourceItems!, items => items.All(priceIsGreaterThanOneHundred));
         
         var filter = createdInCurrentYear
-            .And(nameIsStartWithName)
             .And(sizeIsGreaterThanSizeLimit)
             .And(allItemsPriceIsGreaterThanOneHundred);
         

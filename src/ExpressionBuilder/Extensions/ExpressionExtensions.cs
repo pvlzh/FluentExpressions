@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using ExpressionBuilder.Visitors;
 
@@ -10,35 +11,17 @@ namespace ExpressionBuilder.Extensions;
 public static class ExpressionExtensions
 {
     /// <summary>
-    /// Объединить два логический выражения оператором "И" (значение второго не будет вычислено если первое = false).
+    /// Привести к lambda expression.
     /// </summary>
-    public static Expression<Func<TSource, bool>> AndAlso<TSource>(
-        this Expression<Func<TSource, bool>> sourceExpression, 
-        Expression<Func<TSource, bool>> additionalExpression)
-    {
-        var sourceParameter = sourceExpression.Parameters[0]; 
-        var replaceableParameter = additionalExpression.Parameters[0]; 
-        
-        var expression = additionalExpression.Body.ReplaceParameter(replaceableParameter, sourceParameter);
-        var andExpression = Expression.AndAlso(sourceExpression.Body, expression);
-        return Expression.Lambda<Func<TSource, bool>>(andExpression, sourceExpression.Parameters);
-    }
-    
-    /// <summary>
-    /// Объединить два логический выражения оператором "ИЛИ" (значение второго не будет вычислено если первое = true).
-    /// </summary>
-    public static Expression<Func<TSource, bool>> OrElse<TSource>(
-        this Expression<Func<TSource, bool>> sourceExpression, 
-        Expression<Func<TSource, bool>> additionalExpression)
-    {
-        var sourceParameter = sourceExpression.Parameters[0]; 
-        var replaceableParameter = additionalExpression.Parameters[0]; 
-        
-        var expression = additionalExpression.Body.ReplaceParameter(replaceableParameter, sourceParameter);
-        var orExpression = Expression.OrElse(sourceExpression.Body, expression);
-        return Expression.Lambda<Func<TSource, bool>>(orExpression, sourceExpression.Parameters);
-    }
-
+    /// <param name="expression"> исходное выражение.</param>
+    /// <param name="parameters"> Параметр.</param>
+    /// <typeparam name="TSource"> Тип входного параметра предиката.</typeparam>
+    /// <returns></returns>
+    public static Expression<Func<TSource, bool>> ToLambdaExpression<TSource>(
+        this BinaryExpression expression,
+        IReadOnlyCollection<ParameterExpression> parameters) =>
+            Expression.Lambda<Func<TSource, bool>>(expression, parameters);
+         
     /// <summary>
     /// Получить выражение доступа к полю или свойству элемента.
     /// </summary>
@@ -96,7 +79,6 @@ public static class ExpressionExtensions
             throw new Exception($"Failed to replace the parameter '{replaceableParameter}' " +
                                 $"in the expression tree '{expressionTree}'");
         }
-
         return result;
     }
 }

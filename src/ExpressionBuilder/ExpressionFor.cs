@@ -1,41 +1,47 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using ExpressionBuilder.Abstractions;
-using ExpressionBuilder.Abstractions.Methods;
-using ExpressionBuilder.Internal;
-using ExpressionBuilder.Internal.Methods;
+using ExpressionBuilder.Builders;
+using ExpressionBuilder.Methods;
 
 namespace ExpressionBuilder;
 
 public static class ExpressionFor<TSource>
 {
+    /// <summary>
+    /// Задать правило фильтрации для последовательности <see cref="TSource"/>
+    /// </summary>
+    /// <param name="startExpression"> Начальное правило фильтрации.</param>
+    /// <returns> Строитель выражения фильтрации.</returns>
     public static FilterBuilder<TSource> Where(Expression<Func<TSource, bool>> startExpression)
     {
-        return new InternalFilterBuilder<TSource>(startExpression);
+        return new FilterBuilder<TSource>(startExpression);
     }
 
+    /// <summary>
+    /// Задать правило фильтрации для последовательности <see cref="TSource"/>
+    /// </summary>
+    /// <param name="collectionProperty"> Выражение к свойству связанной коллекции.</param>
+    /// <param name="collectionDelegate"> Операция над коллекцией.</param>
+    /// <typeparam name="TItem"> Тип элемента коллекции.</typeparam>
+    /// <returns> Строитель выражения фильтрации.</returns>
     public static FilterBuilder<TSource> Where<TItem>(
         Expression<Func<TSource, IEnumerable<TItem>>> collectionProperty, 
-        Func<CollectionMethods<TSource, TItem>, Expression<Func<TSource, bool>>> collectionDelegate)
+        Func<CollectionOptions<TSource, TItem>, Expression<Func<TSource, bool>>> collectionDelegate)
     {
-        var collectionMethods = new InternalCollectionMethods<TSource, TItem>(collectionProperty);
-        var startExpression = collectionDelegate?.Invoke(collectionMethods) ?? (_ => true);
-        return new InternalFilterBuilder<TSource>(startExpression);
+        var startExpression = FilterBuilder<TSource>.CreateCollectionPredicate(collectionProperty, collectionDelegate);
+        return Where(startExpression);
     }
-
-    public static FilterBuilder<TSource> Where(
-        Expression<Func<TSource, string>> stringProperty, 
-        Func<StringMethods<TSource>, Expression<Func<TSource, bool>>> collectionDelegate)
-    {
-        var collectionMethods = new InternalStringMethods<TSource>(stringProperty);
-        var startExpression = collectionDelegate?.Invoke(collectionMethods) ?? (_ => true);
-        return new InternalFilterBuilder<TSource>(startExpression);
-    }
-
+    
+    /// <summary>
+    /// Задать правило проекции из <see cref="TSource"/> в <see cref="TDestination"/>
+    /// </summary>
+    /// <param name="selectExpression"> Выражение проекции.</param>
+    /// <typeparam name="TDestination"> Тип результата.</typeparam>
+    /// <returns> Строитель выражения проекции.</returns>
     public static ProjectionBuilder<TSource, TDestination> Select<TDestination>(
         Expression<Func<TSource, TDestination>> selectExpression)
     {
-        return new InternalProjectionBuilder<TSource, TDestination>(selectExpression);
+        return new ProjectionBuilder<TSource, TDestination>(selectExpression);
     }
 }

@@ -4,8 +4,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Tests.TranslationTests.Sqlite;
 
+/// <summary>
+/// Класс конфигурации теста.
+/// </summary>
 public class Startup
 {
+    /// <summary>
+    /// Конфигурация сервисов.
+    /// </summary>
+    /// <param name="services"></param>
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<Fixture>();
