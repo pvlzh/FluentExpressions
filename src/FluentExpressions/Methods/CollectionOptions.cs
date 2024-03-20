@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using ExpressionBuilder.Methods.Base;
+using FluentExpressions.Methods.Base;
 
-namespace ExpressionBuilder.Methods;
+namespace FluentExpressions.Methods;
 
 /// <summary>
 /// Операций над полем или свойством типа <see cref="IEnumerable{TItem}"/> объекта <see cref="TSource"/>.

@@ -1,8 +1,8 @@
 using System;
 using System.Linq.Expressions;
-using ExpressionBuilder.Extensions;
+using FluentExpressions.Extensions;
 
-namespace ExpressionBuilder.Methods.Base;
+namespace FluentExpressions.Methods.Base;
 
 /// <summary>
 /// Абстрактный класс операций над полем или свойством объекта с типом <see cref="TSource"/>

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using ExpressionBuilder.Visitors;
+using FluentExpressions.Visitors;
 
-namespace ExpressionBuilder.Extensions;
+namespace FluentExpressions.Extensions;
 
 /// <summary>
 /// Методы расширения для выражений.

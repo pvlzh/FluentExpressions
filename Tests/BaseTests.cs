@@ -1,5 +1,5 @@
 using AutoFixture;
-using ExpressionBuilder;
+using FluentExpressions;
 using Tests.Classes.Source;
 
 namespace Tests;

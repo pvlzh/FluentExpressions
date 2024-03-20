@@ -27,7 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\src\ExpressionBuilder\ExpressionBuilder.csproj" />
+      <ProjectReference Include="..\src\FluentExpressions\FluentExpressions.csproj" />
     </ItemGroup>
 
 </Project>

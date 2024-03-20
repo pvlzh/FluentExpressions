@@ -1,4 +1,4 @@
-namespace ExpressionBuilder;
+namespace FluentExpressions;
 
 /// <summary>
 /// Основные константы.

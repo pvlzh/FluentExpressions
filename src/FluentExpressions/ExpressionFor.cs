@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using ExpressionBuilder.Builders;
-using ExpressionBuilder.Methods;
+using FluentExpressions.Builders;
+using FluentExpressions.Methods;
 
-namespace ExpressionBuilder;
+namespace FluentExpressions;
 
 public static class ExpressionFor<TSource>
 {

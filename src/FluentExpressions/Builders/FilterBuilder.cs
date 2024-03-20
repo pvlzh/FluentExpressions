@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using ExpressionBuilder.Extensions;
-using ExpressionBuilder.Methods;
+using FluentExpressions.Extensions;
+using FluentExpressions.Methods;
 
-namespace ExpressionBuilder.Builders;
+namespace FluentExpressions.Builders;
 
 /// <summary>
 /// Строитель выражения фильтрации.

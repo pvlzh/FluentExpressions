@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace ExpressionBuilder.Visitors;
+namespace FluentExpressions.Visitors;
 
 /// <summary>
 /// Заменяет одно выражение другим в заданном дереве выражений.

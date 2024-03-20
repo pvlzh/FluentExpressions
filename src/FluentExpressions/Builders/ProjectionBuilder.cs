@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using ExpressionBuilder.Extensions;
+using FluentExpressions.Extensions;
 
-namespace ExpressionBuilder.Builders;
+namespace FluentExpressions.Builders;
 /*
 /// <summary>
 /// Строитель выражения проекции одного объекта на другой.

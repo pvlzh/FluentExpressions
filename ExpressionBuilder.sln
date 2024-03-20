@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpressionBuilder", "src\ExpressionBuilder\ExpressionBuilder.csproj", "{0491AB26-806A-45D9-8B95-7F13D7934474}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentExpressions", "src\FluentExpressions\FluentExpressions.csproj", "{0491AB26-806A-45D9-8B95-7F13D7934474}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{8B339C76-6944-4D70-B544-447D4562B964}"
 EndProject

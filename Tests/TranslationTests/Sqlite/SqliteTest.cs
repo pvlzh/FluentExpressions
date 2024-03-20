@@ -1,5 +1,5 @@
 using AutoFixture;
-using ExpressionBuilder;
+using FluentExpressions;
 using Microsoft.EntityFrameworkCore;
 using Tests.Classes.Source;
 
