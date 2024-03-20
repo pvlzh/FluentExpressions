@@ -6,7 +6,7 @@ using System.Reflection;
 using ExpressionBuilder.Extensions;
 
 namespace ExpressionBuilder.Builders;
-
+/*
 /// <summary>
 /// Строитель выражения проекции одного объекта на другой.
 /// </summary>
@@ -68,3 +68,4 @@ public class ProjectionBuilder<TSource, TDestination>
         ProjectionBuilder<TSource, TDestination> builder) => 
         Expression.Lambda<Func<TSource, TDestination>>(builder._projection, builder._sourceParameter);
 }
+*/

@@ -33,6 +33,7 @@ public static class ExpressionFor<TSource>
         return Where(startExpression);
     }
     
+    /* todo: review the logic of projections
     /// <summary>
     /// Задать правило проекции из <see cref="TSource"/> в <see cref="TDestination"/>
     /// </summary>
@@ -43,5 +44,18 @@ public static class ExpressionFor<TSource>
         Expression<Func<TSource, TDestination>> selectExpression)
     {
         return new ProjectionBuilder<TSource, TDestination>(selectExpression);
+    }
+    */
+    
+    /// <summary>
+    /// If-Else statement expression.
+    /// </summary>
+    /// <param name="condition"> The initial condition.</param>
+    /// <param name="then"> The body of the expression for the positive result of the condition.</param>
+    /// <returns> <see cref="ConditionBuilder{TSource, TDestination}"/>.</returns>
+    public static ConditionBuilder<TSource, TDestination> If<TDestination>(
+        Expression<Func<TSource, bool>> condition, TDestination then)
+    {
+        return new ConditionBuilder<TSource, TDestination>(condition, then);
     }
 }

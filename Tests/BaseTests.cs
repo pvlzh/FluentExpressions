@@ -1,6 +1,5 @@
 using AutoFixture;
 using ExpressionBuilder;
-using Tests.Classes.Destination;
 using Tests.Classes.Source;
 
 namespace Tests;
@@ -54,31 +53,47 @@ public class BaseTests
         // Assert
         Assert.Equal(count, result);
     }
-    
-    /// <summary>
-    /// Тест проекции.
-    /// </summary>
+
     [Fact]
-    public void ProjectionTest()
+    public void ConditionTest1()
     {
         // Arrange
         var sources = _fixture.CreateMany<SourceObject>(30).ToArray();
-        var query = sources.AsQueryable();
-        // Act
-
-        var itemProjection = ExpressionFor<SourceItem>.Select(i => new DestinationItem
-            { Id = i.Id, Description = i.Description, Price = i.Price });
         
-        var projectionExpression = ExpressionFor<SourceObject>.Select(s => 
-                new DestinationObject {
-                    Id = s.Id, 
-                    Name = s.Name, 
-                    CreationDate = s.CreationDate })
-            .With(to: d => d.DestinationItem, from: s => s.SourceItem, itemProjection);
-
-        var result = query.Select<SourceObject, DestinationObject>(projectionExpression).ToArray();
+        var expected = sources.Select(s => s.Size > 100 ? 1 : 0).Count(s => s == 1);
+        var query = sources.AsQueryable();
+        
+        // Act
+        var projectionCondition = ExpressionFor<SourceObject>.If(s => s.Size > 100, 1).Else(0);
+        var filter = ExpressionFor<int>.Where(s => s == 1);
+        
+        var result = query.Select(projectionCondition).Count(filter);
 
         // Assert
-        Assert.Equal(sources.Length, result.Length);
+        Assert.Equal(expected, result);
+    }
+    
+    [Fact]
+    public void ConditionTest2()
+    {
+        // Arrange
+        var sources = _fixture.CreateMany<SourceObject>(30).ToArray();
+        
+        var expected = sources.Select(
+            s => s.Size > 200 ? 2 
+                : s.Size > 100 ? 1 
+                    : 0);
+        var query = sources.AsQueryable();
+        
+        // Act
+        var projectionCondition = ExpressionFor<SourceObject>
+            .If(s => s.Size > 200, 2)
+            .ElseIf(s => s.Size > 100, 1)
+            .Else(0);
+
+        var result = query.Select(projectionCondition);
+
+        // Assert
+        Assert.Empty(expected.Except(result));
     }
 }
