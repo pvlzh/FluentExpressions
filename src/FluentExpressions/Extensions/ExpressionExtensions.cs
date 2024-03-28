@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using FluentExpressions.Visitors;
 
 namespace FluentExpressions.Extensions;
 
@@ -10,55 +8,56 @@ namespace FluentExpressions.Extensions;
 /// </summary>
 public static class ExpressionExtensions
 {
-    /// <summary>
-    /// Lead to lambda expression.
-    /// </summary>
-    /// <param name="expression"> The original expression.</param>
-    /// <param name="parameters"> Lambda parameters.</param>
-    /// <typeparam name="TSource"> Type of predicate input parameter.</typeparam>
-    /// <returns> Lambda expression</returns>
-    public static Expression<Func<TSource, bool>> ToLambdaExpression<TSource>(
-        this BinaryExpression expression,
-        IReadOnlyCollection<ParameterExpression> parameters) =>
-            Expression.Lambda<Func<TSource, bool>>(expression, parameters);
-         
-    /// <summary>
-    /// Get an expression for accessing a field or property of an element.
-    /// </summary>
-    /// <param name="expression"> Lambda to a field or property of an element.</param>
-    /// <typeparam name="TSource"> The type of the source object.</typeparam>
-    /// <typeparam name="TProperty"> Type of field or property.</typeparam>
-    /// <returns> <see cref="MemberExpression"/> Accessing a field or property.</returns>
-    /// <exception cref="ArgumentException"> A lambda expression does not represent access to a field or property.</exception>
-    public static MemberExpression GetMemberExpression<TSource, TProperty>(
-        this Expression<Func<TSource, TProperty>> expression)
+    public static Expression<Func<TSource, bool>> GreaterThan<TSource>(
+        this Expression<Func<TSource, int>> sourceExpression, int value)
     {
-        if (expression.Body is not MemberExpression memberExpression)
-        {
-            throw new ArgumentException($"Expression '{expression}' is not represents " +
-                                        $"accessing a field or property");
-        }
-
-        return memberExpression;
+        var parameter = Expression.Constant(value);
+        var expression = Expression.GreaterThan(sourceExpression.Body, parameter)
+            .ToLambdaExpression<TSource>(sourceExpression.Parameters);
+        return expression;
     }
     
-    /// <summary>
-    /// Replace the parameter in the expression.
-    /// </summary>
-    /// <param name="expressionTree"> The expression in which the replacement will be performed.</param>
-    /// <param name="replaceableParameter"> The parameter that needs to be replaced.</param>
-    /// <param name="replacement"> The expression used as a substitute.</param>
-    /// <returns> An expression with a replaced parameter.</returns>
-    /// <exception cref="Exception"> Failed to replace.</exception>
-    public static Expression ReplaceParameter(this Expression expressionTree, ParameterExpression replaceableParameter, Expression replacement)
+    public static Expression<Func<TSource, bool>> GreaterThan<TSource>(
+        this Expression<Func<TSource, int>> sourceExpression, 
+        Expression<Func<TSource, int>> propertyExpression)
     {
-        var visitor = new ParameterReplacingVisitor(replaceableParameter, replacement);
-        var result = visitor.Visit(expressionTree);
-        if (result == null)
-        {
-            throw new Exception($"Failed to replace the parameter '{replaceableParameter}' " +
-                                $"in the expression tree '{expressionTree}'");
-        }
-        return result;
+        var property = ReduceToCommonParameter(sourceExpression, propertyExpression);
+        var expression = Expression.GreaterThan(sourceExpression.Body, property)
+            .ToLambdaExpression<TSource>(sourceExpression.Parameters);
+        return expression;
+    }
+    
+    public static Expression<Func<TSource, bool>> LessThan<TSource>(
+        this Expression<Func<TSource, int>> sourceExpression, int value)
+    {
+        var parameter = Expression.Constant(value);
+        var expression = Expression.LessThan(sourceExpression.Body, parameter)
+            .ToLambdaExpression<TSource>(sourceExpression.Parameters);
+        return expression;
+    }
+    
+    public static Expression<Func<TSource, bool>> LessThan<TSource>(
+        this Expression<Func<TSource, int>> sourceExpression, 
+        Expression<Func<TSource, int>> propertyExpression)
+    {
+        var property = ReduceToCommonParameter(sourceExpression, propertyExpression);
+        var expression = Expression.LessThan(sourceExpression.Body, property)
+            .ToLambdaExpression<TSource>(sourceExpression.Parameters);
+        return expression;
+    }
+
+    /// <summary>
+    /// To reduce the property expression to a common parameter.
+    /// </summary>
+    /// <param name="sourceExpression"> The original expression.</param>
+    /// <param name="propertyExpression"> Source property expression.</param>
+    /// <typeparam name="TSource"> Type of input value.</typeparam>
+    /// <returns></returns>
+    private static Expression ReduceToCommonParameter<TSource>(Expression<Func<TSource, int>> sourceExpression, Expression<Func<TSource, int>> propertyExpression)
+    {
+        var replaceableParameter = propertyExpression.Parameters[0];
+        var sourceParameter = sourceExpression.Parameters[0];
+        
+        return propertyExpression.Body.ReplaceParameter(replaceableParameter, sourceParameter);
     }
 }

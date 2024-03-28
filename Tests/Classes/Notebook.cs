@@ -16,11 +16,14 @@ public class Notebook
     /// <summary> Processor manufacturer. </summary>
     public Processor Processor { get; set; }
     
+    /// <summary> Processor manufacturer. </summary>
+    public short Cores { get; set; }
+    
     /// <summary> Amount of RAM in GB. </summary>
-    public uint RAM { get; set; }
+    public short RAM { get; set; }
     
     /// <summary> Amount of ROM in GB. </summary>
-    public uint ROM { get; set; }
+    public short ROM { get; set; }
     
     /// <summary> Cost. </summary>
     public decimal Price { get; set; }

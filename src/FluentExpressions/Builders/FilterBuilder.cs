@@ -28,7 +28,7 @@ public class FilterBuilder<TSource>
     /// <returns> Filtering Expression Builder.</returns>
     public FilterBuilder<TSource> And(Expression<Func<TSource, bool>> additionalPredicate)
     {
-        var andExpression = Expression.AndAlso(_predicate.Body, ReplaceParameter(additionalPredicate));
+        var andExpression = Expression.AndAlso(_predicate.Body, ReduceToCommonParameter(additionalPredicate));
         _predicate = andExpression.ToLambdaExpression<TSource>(_predicate.Parameters);
         return this;
     }
@@ -40,7 +40,7 @@ public class FilterBuilder<TSource>
     /// <returns> Filtering Expression Builder.</returns>
     public FilterBuilder<TSource> Or(Expression<Func<TSource, bool>> additionalPredicate)
     {
-        var orExpression = Expression.OrElse(_predicate.Body, ReplaceParameter(additionalPredicate));
+        var orExpression = Expression.OrElse(_predicate.Body, ReduceToCommonParameter(additionalPredicate));
         _predicate = orExpression.ToLambdaExpression<TSource>(_predicate.Parameters);
         return this;
     }
@@ -89,7 +89,7 @@ public class FilterBuilder<TSource>
     /// Replace the parameter in the added expression with the parameter of the original one.
     /// </summary>
     /// <param name="additionalPredicate"> Additional condition.</param>
-    private Expression ReplaceParameter(Expression<Func<TSource, bool>> additionalPredicate)
+    private Expression ReduceToCommonParameter(Expression<Func<TSource, bool>> additionalPredicate)
     {
         var sourceParameter = _predicate.Parameters[0]; 
         var replaceableParameter = additionalPredicate.Parameters[0]; 
