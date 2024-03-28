@@ -9,22 +9,22 @@ namespace FluentExpressions;
 public static class ExpressionFor<TSource>
 {
     /// <summary>
-    /// Задать правило фильтрации для последовательности <see cref="TSource"/>
+    /// Set a filter rule for the sequence <see cref="TSource"/>
     /// </summary>
-    /// <param name="startExpression"> Начальное правило фильтрации.</param>
-    /// <returns> Строитель выражения фильтрации.</returns>
+    /// <param name="startExpression"> The initial filtering rule.</param>
+    /// <returns> Filtering Expression Builder.</returns>
     public static FilterBuilder<TSource> Where(Expression<Func<TSource, bool>> startExpression)
     {
         return new FilterBuilder<TSource>(startExpression);
     }
 
     /// <summary>
-    /// Задать правило фильтрации для последовательности <see cref="TSource"/>
+    /// Set a filter rule for the sequence <see cref="TSource"/>
     /// </summary>
-    /// <param name="collectionProperty"> Выражение к свойству связанной коллекции.</param>
-    /// <param name="collectionDelegate"> Операция над коллекцией.</param>
-    /// <typeparam name="TItem"> Тип элемента коллекции.</typeparam>
-    /// <returns> Строитель выражения фильтрации.</returns>
+    /// <param name="collectionProperty"> Expression to a property of a linked collection.</param>
+    /// <param name="collectionDelegate"> Operation on a collection.</param>
+    /// <typeparam name="TItem"> Type of the collection item.</typeparam>
+    /// <returns> Filtering Expression Builder.</returns>
     public static FilterBuilder<TSource> Where<TItem>(
         Expression<Func<TSource, IEnumerable<TItem>>> collectionProperty, 
         Func<CollectionOptions<TSource, TItem>, Expression<Func<TSource, bool>>> collectionDelegate)
@@ -33,19 +33,6 @@ public static class ExpressionFor<TSource>
         return Where(startExpression);
     }
     
-    /* todo: review the logic of projections
-    /// <summary>
-    /// Задать правило проекции из <see cref="TSource"/> в <see cref="TDestination"/>
-    /// </summary>
-    /// <param name="selectExpression"> Выражение проекции.</param>
-    /// <typeparam name="TDestination"> Тип результата.</typeparam>
-    /// <returns> Строитель выражения проекции.</returns>
-    public static ProjectionBuilder<TSource, TDestination> Select<TDestination>(
-        Expression<Func<TSource, TDestination>> selectExpression)
-    {
-        return new ProjectionBuilder<TSource, TDestination>(selectExpression);
-    }
-    */
     
     /// <summary>
     /// If-Else statement expression.

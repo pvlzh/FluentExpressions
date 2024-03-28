@@ -1,20 +1,15 @@
 using AutoFixture;
 using FluentExpressions;
-using Tests.Classes.Source;
+using Tests.Classes;
 
 namespace Tests;
 
 public class BaseTests
 {
-    private readonly Fixture _fixture;
-
-    public BaseTests(Fixture fixture)
-    {
-        _fixture = fixture;
-    }
+    private readonly Fixture _fixture = new ();
     
     /// <summary>
-    /// Тест фильтрации.
+    /// Filtration test.
     /// </summary>
     [Fact]
     public void FiltrationTest()
@@ -22,78 +17,23 @@ public class BaseTests
         _fixture.Customizations.Add(new RandomDateTimeSequenceGenerator());
         
         // Arrange
-        const int sizeLimit = 10;
-        var currentYear = DateTime.UtcNow.Year;
+        var queryNotebooks = _fixture.CreateMany<Notebook>(1000).AsQueryable();
+        var arrayNotebooks = queryNotebooks.ToArray();
         
-        var sources = _fixture.CreateMany<SourceObject>(30).ToArray();
-        var count = sources.Count(s => s.CreationDate.Year == currentYear 
-                                       && s.Size > sizeLimit 
-                                       && s.Name.StartsWith(nameof(SourceObject.Name))
-                                       && s.SourceItems!.All(i => i.Price > 100));
-        
+        var expectedCount = arrayNotebooks.Count(n => 
+            n.Brand == NotebookBrand.HP && n.DateManufacture.Year == DateTime.Now.Year - 1);
+
         // Act
-        var createdInCurrentYear = ExpressionFor<SourceObject>
-            .Where(s => s.CreationDate.Year == currentYear);
+        var isHp = ExpressionFor<Notebook>
+            .Where(n => n.Brand == NotebookBrand.HP);
         
-        var sizeIsGreaterThanSizeLimit = ExpressionFor<SourceObject>
-            .Where(s => s.Size > sizeLimit);
+        var createdInPastYear = ExpressionFor<Notebook>
+            .Where(n => n.DateManufacture.Year == DateTime.Now.Year - 1);
         
-        var priceIsGreaterThanOneHundred = ExpressionFor<SourceItem>
-            .Where(item => item.Price > 100);
-        
-        var allItemsPriceIsGreaterThanOneHundred = ExpressionFor<SourceObject>
-            .Where(s => s.SourceItems!, items => items.All(priceIsGreaterThanOneHundred));
-        
-        var filter = createdInCurrentYear
-            .And(sizeIsGreaterThanSizeLimit)
-            .And(allItemsPriceIsGreaterThanOneHundred);
-        
-        var result = sources.AsQueryable().Count(filter);
+        var result = queryNotebooks.Count(isHp.And(createdInPastYear));
         
         // Assert
-        Assert.Equal(count, result);
+        Assert.Equal(expectedCount, result);
     }
 
-    [Fact]
-    public void ConditionTest1()
-    {
-        // Arrange
-        var sources = _fixture.CreateMany<SourceObject>(30).ToArray();
-        
-        var expected = sources.Select(s => s.Size > 100 ? 1 : 0).Count(s => s == 1);
-        var query = sources.AsQueryable();
-        
-        // Act
-        var projectionCondition = ExpressionFor<SourceObject>.If(s => s.Size > 100, 1).Else(0);
-        var filter = ExpressionFor<int>.Where(s => s == 1);
-        
-        var result = query.Select(projectionCondition).Count(filter);
-
-        // Assert
-        Assert.Equal(expected, result);
-    }
-    
-    [Fact]
-    public void ConditionTest2()
-    {
-        // Arrange
-        var sources = _fixture.CreateMany<SourceObject>(30).ToArray();
-        
-        var expected = sources.Select(
-            s => s.Size > 200 ? 2 
-                : s.Size > 100 ? 1 
-                    : 0);
-        var query = sources.AsQueryable();
-        
-        // Act
-        var projectionCondition = ExpressionFor<SourceObject>
-            .If(s => s.Size > 200, 2)
-            .ElseIf(s => s.Size > 100, 1)
-            .Else(0);
-
-        var result = query.Select(projectionCondition);
-
-        // Assert
-        Assert.Empty(expected.Except(result));
-    }
 }

@@ -5,19 +5,18 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Tests.TranslationTests.Sqlite;
 
 /// <summary>
-/// Класс конфигурации теста.
+/// DI test configuration.
 /// </summary>
 public class Startup
 {
     /// <summary>
-    /// Конфигурация сервисов.
+    /// Configure services.
     /// </summary>
-    /// <param name="services"></param>
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddSingleton<Fixture>();
-        
         var fixture = new Fixture();
+        services.AddSingleton(fixture);
+        
         fixture.Customize(new SqliteCustomization());
         services.AddScoped<DataContext>(_ => fixture.Create<DataContext>());
     }

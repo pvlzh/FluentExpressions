@@ -1,19 +1,17 @@
 using Microsoft.EntityFrameworkCore;
-using Tests.Classes.Source;
+using Tests.Classes;
 
 namespace Tests.TranslationTests;
 
 /// <summary>
-/// Контекст БД.
+/// DB context.
 /// </summary>
 public class DataContext : DbContext
 {
-    public DbSet<SourceObject> SourceObjects { get; set; } = null!;
-    public DbSet<SourceItem> SourceItems { get; set; } = null!;
+    public DbSet<Notebook> Notebook { get; set; } = null!;
 
     /// <inheritdoc />
-    public DataContext() 
-        : base() {}
+    public DataContext() : base() {}
 
     /// <inheritdoc />
     public DataContext(DbContextOptions<DataContext> options) 
@@ -22,16 +20,7 @@ public class DataContext : DbContext
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<SourceItem>(builder =>
-        {
-            builder.HasKey(s => s.Id);
-
-            builder.HasOne<SourceObject>()
-                .WithMany(s => s.SourceItems)
-                .HasForeignKey("source_id");
-        });
-        
-        modelBuilder.Entity<SourceObject>(builder =>
+        modelBuilder.Entity<Notebook>(builder =>
         {
             builder.HasKey(s => s.Id);
         });

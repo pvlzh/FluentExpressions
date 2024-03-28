@@ -8,10 +8,10 @@ using FluentExpressions.Methods.Base;
 namespace FluentExpressions.Methods;
 
 /// <summary>
-/// Операций над полем или свойством типа <see cref="IEnumerable{TItem}"/> объекта <see cref="TSource"/>.
+/// Operations on a field or property of the type <see cref="IEnumerable{TItem}"/> object <see cref="TSource"/>.
 /// </summary>
-/// <typeparam name="TSource"> Тип исходного элемента.</typeparam>
-/// <typeparam name="TItem"> Тип элементов коллекции.</typeparam>
+/// <typeparam name="TSource"> The type of the source element.</typeparam>
+/// <typeparam name="TItem"> Type of collection items.</typeparam>
 public class CollectionOptions<TSource, TItem> : PropertyMethods<TSource, IEnumerable<TItem>>
 {
     /// <inheritdoc cref="PropertyMethods{TSource, TProperty}"/>
@@ -21,9 +21,9 @@ public class CollectionOptions<TSource, TItem> : PropertyMethods<TSource, IEnume
     }
 
     /// <summary>
-    /// Определяет, удовлетворяет ли хотя бы элемент последовательности условию.
+    /// Determines whether at least an element of the sequence satisfies the condition.
     /// </summary>
-    /// <param name="itemPredicate"> Логическое выражение над элементом коллекции.</param>
+    /// <param name="itemPredicate"> A boolean expression over a collection item.</param>
     public Expression<Func<TSource, bool>> Any(Expression<Func<TItem, bool>> itemPredicate)
     {
         var anyMethod = AnyMethod(typeof(TItem));
@@ -32,9 +32,9 @@ public class CollectionOptions<TSource, TItem> : PropertyMethods<TSource, IEnume
     }
 
     /// <summary>
-    /// Определяет, удовлетворяют ли все элементы последовательности условию.
+    /// Determines whether all elements of the sequence satisfy the condition.
     /// </summary>
-    /// <param name="itemPredicate"> Логическое выражение над элементом коллекции.</param>
+    /// <param name="itemPredicate"> A boolean expression over a collection item.</param>
     public Expression<Func<TSource, bool>> All(Expression<Func<TItem, bool>> itemPredicate)
     {
         var allMethod = AllMethod(typeof(TItem));

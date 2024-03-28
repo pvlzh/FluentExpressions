@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 namespace FluentExpressions.Visitors;
 
 /// <summary>
-/// Заменяет одно выражение другим в заданном дереве выражений.
+/// Replaces one expression with another in the specified expression tree.
 /// </summary>
 internal class ParameterReplacingVisitor : ExpressionVisitor
 {
@@ -11,8 +11,8 @@ internal class ParameterReplacingVisitor : ExpressionVisitor
     private readonly Expression _replacement;
 
     /// <inheritdoc cref="ParameterReplacingVisitor"/>
-    /// <param name="replaceableParameter"> Параметр, который необходимо заменить.</param>
-    /// <param name="replacement"> Выражение, используемое в качестве замены.</param>
+    /// <param name="replaceableParameter"> The parameter that needs to be replaced.</param>
+    /// <param name="replacement"> The expression used as a substitute.</param>
     public ParameterReplacingVisitor(ParameterExpression replaceableParameter, Expression replacement)
     {
         _replaceableParameter = replaceableParameter;

@@ -6,30 +6,30 @@ using FluentExpressions.Visitors;
 namespace FluentExpressions.Extensions;
 
 /// <summary>
-/// Методы расширения для выражений.
+/// Extension methods for expressions.
 /// </summary>
 public static class ExpressionExtensions
 {
     /// <summary>
-    /// Привести к lambda expression.
+    /// Lead to lambda expression.
     /// </summary>
-    /// <param name="expression"> исходное выражение.</param>
-    /// <param name="parameters"> Параметр.</param>
-    /// <typeparam name="TSource"> Тип входного параметра предиката.</typeparam>
-    /// <returns></returns>
+    /// <param name="expression"> The original expression.</param>
+    /// <param name="parameters"> Lambda parameters.</param>
+    /// <typeparam name="TSource"> Type of predicate input parameter.</typeparam>
+    /// <returns> Lambda expression</returns>
     public static Expression<Func<TSource, bool>> ToLambdaExpression<TSource>(
         this BinaryExpression expression,
         IReadOnlyCollection<ParameterExpression> parameters) =>
             Expression.Lambda<Func<TSource, bool>>(expression, parameters);
          
     /// <summary>
-    /// Получить выражение доступа к полю или свойству элемента.
+    /// Get an expression for accessing a field or property of an element.
     /// </summary>
-    /// <param name="expression"> Лямбда к полю или свойству элемента.</param>
-    /// <typeparam name="TSource"> Тип исходного объекта.</typeparam>
-    /// <typeparam name="TProperty"> Тип поля или свойства.</typeparam>
-    /// <returns> <see cref="MemberExpression"/></returns>
-    /// <exception cref="ArgumentException"> Лямбда выражение не представляет собой доступ к полю или свойству.</exception>
+    /// <param name="expression"> Lambda to a field or property of an element.</param>
+    /// <typeparam name="TSource"> The type of the source object.</typeparam>
+    /// <typeparam name="TProperty"> Type of field or property.</typeparam>
+    /// <returns> <see cref="MemberExpression"/> Accessing a field or property.</returns>
+    /// <exception cref="ArgumentException"> A lambda expression does not represent access to a field or property.</exception>
     public static MemberExpression GetMemberExpression<TSource, TProperty>(
         this Expression<Func<TSource, TProperty>> expression)
     {
@@ -43,33 +43,13 @@ public static class ExpressionExtensions
     }
     
     /// <summary>
-    /// Получить выражение инициализации элемента.
+    /// Replace the parameter in the expression.
     /// </summary>
-    /// <param name="expression"> Лямбда инициализации элемента.</param>
-    /// <typeparam name="TSource"> Тип исходного объекта.</typeparam>
-    /// <typeparam name="TDestination"> Тип инициализируемого элемента.</typeparam>
-    /// <returns> <see cref="MemberInitExpression"/></returns>
-    /// <exception cref="ArgumentException"> Лямбда выражение не представляет собой инициализацию объекта.</exception>
-    public static MemberInitExpression GetMemberInitExpression<TSource, TDestination>(
-        this Expression<Func<TSource, TDestination>> expression)
-    {
-        if (expression.Body is not MemberInitExpression memberInitExpression)
-        {
-            throw new ArgumentException($"Expression '{expression}' is not represents initialization " +
-                                        $"one or more members of the new object");
-        }
-
-        return memberInitExpression;
-    }
-    
-    /// <summary>
-    /// Заменить параметр в выражении.
-    /// </summary>
-    /// <param name="expressionTree"> Выражение в котором будет производиться замена.</param>
-    /// <param name="replaceableParameter"> Параметр, который необходимо заменить.</param>
-    /// <param name="replacement"> Выражение, используемое в качестве замены.</param>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
+    /// <param name="expressionTree"> The expression in which the replacement will be performed.</param>
+    /// <param name="replaceableParameter"> The parameter that needs to be replaced.</param>
+    /// <param name="replacement"> The expression used as a substitute.</param>
+    /// <returns> An expression with a replaced parameter.</returns>
+    /// <exception cref="Exception"> Failed to replace.</exception>
     public static Expression ReplaceParameter(this Expression expressionTree, ParameterExpression replaceableParameter, Expression replacement)
     {
         var visitor = new ParameterReplacingVisitor(replaceableParameter, replacement);

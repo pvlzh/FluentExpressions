@@ -1,65 +1,52 @@
 using AutoFixture;
 using FluentExpressions;
 using Microsoft.EntityFrameworkCore;
-using Tests.Classes.Source;
+using Tests.Classes;
 
 namespace Tests.TranslationTests.Sqlite;
 
+/// <summary>
+/// Tests with sql translation.
+/// </summary>
 public class SqliteTest
 {
     private readonly Fixture _fixture;
     private readonly DataContext _context;
 
-    public SqliteTest(Fixture fixture, DataContext context)
-    {
-        _fixture = fixture;
-        _context = context;
-    }
+    public SqliteTest(Fixture fixture, DataContext context) => 
+        (_fixture, _context) = (fixture, context);
     
     [Fact]
-    public async Task SqliteConditionsTest1()
+    public async Task SqliteFiltrationTest1()
     {
         // Arrange
-        await FillDataContext();
+        _fixture.Customizations.Add(new RandomDateTimeSequenceGenerator());
         
-        var currentYear = DateTime.UtcNow.Year;
-        var sizeLimit = 10;
+        const int amountOfFunds = 5000;
+        _context.AddRange(_fixture.CreateMany<Notebook>(1000));
+        await _context.SaveChangesAsync();
         
-        var dbSet = _context.Set<SourceObject>();
+        var queryNotebooks = _context.Set<Notebook>();
+        var arrayNotebooks = queryNotebooks.ToArray();
         
-        var objects = dbSet.ToArray();
-        var expectedCount = objects.Count(o => 
-            o.CreationDate.Year == currentYear 
-            && o.Size > sizeLimit
-            && o.SourceItems!.All(i => i.Price > 100));
+        var expectedCount = arrayNotebooks.Count(n => 
+            n.Brand == NotebookBrand.ASUS && n.DateManufacture.Year == DateTime.Now.Year && n.Price < amountOfFunds);
         
         // Act
-        var createdInCurrentYear = ExpressionFor<SourceObject>
-            .Where(s => s.CreationDate.Year == currentYear);
+        var isAsus = ExpressionFor<Notebook>
+            .Where(n => n.Brand == NotebookBrand.ASUS);
         
-        var sizeIsGreaterThanSizeLimit = ExpressionFor<SourceObject>
-            .Where(s => s.Size > sizeLimit);
+        var manufactureInCurrentYear = ExpressionFor<Notebook>
+            .Where(n => n.DateManufacture.Year == DateTime.Now.Year);
         
-        var priceIsGreaterThanOneHundred = ExpressionFor<SourceItem>
-            .Where(item => item.Price > 100);
+        var fitsIntoBudget = ExpressionFor<Notebook>
+            .Where(n => n.Price < amountOfFunds);
         
-        var allItemsPriceIsGreaterThanOneHundred = ExpressionFor<SourceObject>
-            .Where(s => s.SourceItems!, items => items.All(priceIsGreaterThanOneHundred));
-        
-        var filter = createdInCurrentYear.And(sizeIsGreaterThanSizeLimit)
-            .And(allItemsPriceIsGreaterThanOneHundred);
-
-        var resultCount = await dbSet.CountAsync(filter);
+        var filter = isAsus.And(manufactureInCurrentYear).And(fitsIntoBudget);
+        var resultCount = await queryNotebooks.CountAsync(filter);
         
         // Assert
         Assert.Equal(expectedCount, resultCount);
     }
     
-
-    private async Task FillDataContext()
-    {
-        var objects = _fixture.CreateMany<SourceObject>(100);
-        _context.AddRange(objects);
-        await _context.SaveChangesAsync();
-    }
 }
