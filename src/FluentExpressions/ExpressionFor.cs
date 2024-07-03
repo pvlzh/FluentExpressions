@@ -11,6 +11,15 @@ public static class ExpressionFor<TSource>
     /// <summary>
     /// Set a filter rule for the sequence <see cref="TSource"/>
     /// </summary>
+    /// <returns> Filtering Expression Builder.</returns>
+    public static FilterBuilder<TSource> Start()
+    {
+        return new FilterBuilder<TSource>(_ => true);
+    }
+    
+    /// <summary>
+    /// Set a filter rule for the sequence <see cref="TSource"/>
+    /// </summary>
     /// <param name="startExpression"> The initial filtering rule.</param>
     /// <returns> Filtering Expression Builder.</returns>
     public static FilterBuilder<TSource> Where(Expression<Func<TSource, bool>> startExpression)
